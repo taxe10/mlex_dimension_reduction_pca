@@ -15,7 +15,7 @@ First, build the dimension reduction image in terminal:
 Once built, you can run the following examples:
 `make PCA_example`
 
-which is equivalend to first `make run_docker` then `python pca_run.py data/Demoshapes.npz output '{"n_components": 2}'`.
+which is equivalend to first `make run_docker` then `python pca_run.py data/Demoshapes.npz data/output '{"n_components": 2}'`.
 
 These examples utilize the information stored in the folder /data. The computed latent vectors will be saved in /output.
 
