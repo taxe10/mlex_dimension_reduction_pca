@@ -5,3 +5,5 @@ Pillow
 joblib
 scikit-learn
 requests
+pandas
+pyarrow
