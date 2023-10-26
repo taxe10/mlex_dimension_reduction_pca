@@ -38,7 +38,7 @@ if __name__ == "__main__":
     if images_dir == "data/example_latentrepresentation/f_vectors.parquet":
         df = pd.read_parquet(images_dir)
         images = df.values
-        print(images.shape)
+    print(images.shape)
 
     # Load dimension reduction parameter
     if args.parameters is not None:
