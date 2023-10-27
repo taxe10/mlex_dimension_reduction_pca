@@ -17,7 +17,7 @@ Once built, you can run the following examples:
 
 which is equivalend to first `make run_docker` then `python pca_run.py data/example_shapes/Demoshapes.npz data/output '{"n_components": 2}'`.
 
-These examples utilize the information stored in the folder /data. The computed latent vectors will be saved in /output.
+These examples utilize the information stored in the folder /data. The computed latent vectors will be saved in data/output.
 
 #### TODO: run the container interactively
 
