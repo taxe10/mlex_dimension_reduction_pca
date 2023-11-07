@@ -4,8 +4,9 @@ import pathlib
 import numpy as np
 import json
 import pandas as pd
+import time
 
-from utils import PCAParameters
+from utils import PCAParameters, load_images_from_directory
 
 """ Compute PCA
     Input: 1d data (N, M) or 2d data (N, H, W)
@@ -38,8 +39,10 @@ if __name__ == "__main__":
     if images_dir == "data/example_latentrepresentation/f_vectors.parquet":
         df = pd.read_parquet(images_dir)
         images = df.values
+    if images_dir == "data/upload/archive-20231025T173412Z-001/archive":
+        images = load_images_from_directory(images_dir)
     print(images.shape)
-
+    start_time = time.time()
     # Load dimension reduction parameter
     if args.parameters is not None:
         parameters = PCAParameters(**json.loads(args.parameters))
@@ -55,3 +58,8 @@ if __name__ == "__main__":
     np.save(str(output_dir) + '/' + output_name, latent_vectors)
 
     print("PCA done, latent vector saved.")
+    end_time = time.time()
+    execution_time = end_time - start_time
+
+    # Print the execution time
+    print(f"Execution time: {execution_time} seconds")
