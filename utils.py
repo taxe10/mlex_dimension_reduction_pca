@@ -8,7 +8,7 @@ class PCAParameters(BaseModel):
 
 def load_images_from_directory(directory_path):
     image_data = []
-    for filename in os.listdir(directory_path)[:20]:
+    for filename in os.listdir(directory_path)[:200]:
         if filename.endswith(".png"):
             file_path = os.path.join(directory_path, filename)
             try:
