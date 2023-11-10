@@ -32,14 +32,14 @@ if __name__ == "__main__":
     output_dir = pathlib.Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Load images
+    ## Load images from given images_dir
     images = None
     if images_dir == "data/example_shapes/Demoshapes.npz":
         images = np.load(images_dir)['arr_0']
     if images_dir == "data/example_latentrepresentation/f_vectors.parquet":
         df = pd.read_parquet(images_dir)
         images = df.values
-    if images_dir == "data/upload/archive-20231025T173412Z-001/archive":
+    else: # user uploaded zip file
         images = load_images_from_directory(images_dir)
     print(images.shape)
     start_time = time.time()
