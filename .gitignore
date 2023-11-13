@@ -2,4 +2,6 @@
 .DS_Store
 __pycache__/
 data/output/
+data/upload/
 .file_manager_vars
+data/upload/
