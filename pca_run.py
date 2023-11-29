@@ -54,7 +54,7 @@ if __name__ == "__main__":
     print("Latent vector shape: ", latent_vectors.shape)
     
     # Save latent vectors
-    output_name = f'pca_{parameters.n_components}d.npy'
+    output_name = 'latent_vectors.npy'
     np.save(str(output_dir) + '/' + output_name, latent_vectors)
 
     print("PCA done, latent vector saved.")
