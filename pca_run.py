@@ -5,6 +5,7 @@ import numpy as np
 import json
 import pandas as pd
 import time
+import yaml
 
 from utils import PCAParameters, load_images_from_directory
 
@@ -21,15 +22,28 @@ def computePCA(data, n_components=2, standarize=False):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-
-    parser.add_argument('image_dir', help='image filepath')
-    parser.add_argument('output_dir', help='dir to save the computed latent vactors')
-    parser.add_argument('parameters', help='dictionary that contains model parameters')
-    
+    parser.add_argument("yaml_path", type=str, help="path of yaml file for parameters")
     args = parser.parse_args()
 
-    images_dir = args.image_dir
-    output_dir = pathlib.Path(args.output_dir)
+    # Open the YAML file for all parameters
+    with open(args.yaml_path, "r") as file:
+        # Load parameters
+        parameters = yaml.safe_load(file)
+
+    # Validate and load I/O related parameters
+    io_parameters = parameters["io_parameters"]
+    # Check input and output dir are provided
+    assert io_parameters["images_dir"], "Input dir (image filepath) not provided for training."
+    assert io_parameters["output_dir"], "Output dir (dir to save the computed latent vactors) not provided for training."
+
+    # Validate model parameters:
+    model_parameters = parameters["model_parameters"]
+    print(model_parameters)
+    parameters = PCAParameters(2)
+    print(parameters)
+
+    images_dir = io_parameters["images_dir"]
+    output_dir = pathlib.Path(io_parameters["output_dir"])
     output_dir.mkdir(parents=True, exist_ok=True)
 
     ## Load images from given images_dir
@@ -46,23 +60,24 @@ if __name__ == "__main__":
         images = load_images_from_directory(images_dir)
     print(images.shape)
     start_time = time.time()
+
     # Load dimension reduction parameter
     if args.parameters is not None:
         parameters = PCAParameters(**json.loads(args.parameters))
     
-    print(f'PCA parameters: {parameters.n_components}')
+    # print(f'PCA parameters: {parameters.n_components}')
 
-    # Run PCA
-    latent_vectors = computePCA(images, n_components=parameters.n_components)
-    print("Latent vector shape: ", latent_vectors.shape)
+    # # Run PCA
+    # latent_vectors = computePCA(images, n_components=parameters.n_components)
+    # print("Latent vector shape: ", latent_vectors.shape)
     
-    # Save latent vectors
-    output_name = 'latent_vectors.npy'
-    np.save(str(output_dir) + '/' + output_name, latent_vectors)
+    # # Save latent vectors
+    # output_name = 'latent_vectors.npy'
+    # np.save(str(output_dir) + '/' + output_name, latent_vectors)
 
-    print("PCA done, latent vector saved.")
-    end_time = time.time()
-    execution_time = end_time - start_time
+    # print("PCA done, latent vector saved.")
+    # end_time = time.time()
+    # execution_time = end_time - start_time
 
-    # Print the execution time
-    print(f"Execution time: {execution_time} seconds")
+    # # Print the execution time
+    # print(f"Execution time: {execution_time} seconds")
