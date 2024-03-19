@@ -7,7 +7,7 @@ import pandas as pd
 import time
 import yaml
 
-from utils import PCAParameters, load_images_from_directory
+from utils import load_images_from_directory
 
 """ Compute PCA
     Input: 1d data (N, M) or 2d data (N, H, W)
@@ -38,9 +38,8 @@ if __name__ == "__main__":
 
     # Validate model parameters:
     model_parameters = parameters["model_parameters"]
+    print("model_parameters")
     print(model_parameters)
-    parameters = PCAParameters(2)
-    print(parameters)
 
     images_dir = io_parameters["images_dir"]
     output_dir = pathlib.Path(io_parameters["output_dir"])
@@ -61,23 +60,17 @@ if __name__ == "__main__":
     print(images.shape)
     start_time = time.time()
 
-    # Load dimension reduction parameter
-    if args.parameters is not None:
-        parameters = PCAParameters(**json.loads(args.parameters))
+    # Run PCA
+    latent_vectors = computePCA(images, n_components=model_parameters['n_components'])
+    print("Latent vector shape: ", latent_vectors.shape)
     
-    # print(f'PCA parameters: {parameters.n_components}')
+    # Save latent vectors
+    output_name = 'latent_vectors.npy'
+    np.save(str(output_dir) + '/' + output_name, latent_vectors)
 
-    # # Run PCA
-    # latent_vectors = computePCA(images, n_components=parameters.n_components)
-    # print("Latent vector shape: ", latent_vectors.shape)
-    
-    # # Save latent vectors
-    # output_name = 'latent_vectors.npy'
-    # np.save(str(output_dir) + '/' + output_name, latent_vectors)
+    print("PCA done, latent vector saved.")
+    end_time = time.time()
+    execution_time = end_time - start_time
 
-    # print("PCA done, latent vector saved.")
-    # end_time = time.time()
-    # execution_time = end_time - start_time
-
-    # # Print the execution time
-    # print(f"Execution time: {execution_time} seconds")
+    # Print the execution time
+    print(f"Execution time: {execution_time} seconds")
