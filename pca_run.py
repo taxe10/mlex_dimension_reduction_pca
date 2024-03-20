@@ -2,7 +2,6 @@ from sklearn.decomposition import PCA
 import argparse
 import pathlib
 import numpy as np
-import json
 import pandas as pd
 import time
 import yaml
