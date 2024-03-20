@@ -18,6 +18,7 @@ test:
 
 build_docker: 
 	docker build -t ${IMG_WEB_SVC} -f ./docker/Dockerfile .
+	podman build -t ghcr.io/runboj/mlex_dimension_reduction_pca:main -f ./docker/Dockerfile .
 
 run_docker:
 	docker run --shm-size=1g --ulimit memlock=-1 --ulimit stack=67108864 --memory-swap -1 -it -v ${PWD}/data:/app/work/data/ ${IMG_WEB_SVC} bash
