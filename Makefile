@@ -18,6 +18,8 @@ test:
 
 build_docker: 
 	docker build -t ${IMG_WEB_SVC} -f ./docker/Dockerfile .
+
+build_podman:
 	podman build -t ghcr.io/runboj/mlex_dimension_reduction_pca:main -f ./docker/Dockerfile .
 
 run_docker:

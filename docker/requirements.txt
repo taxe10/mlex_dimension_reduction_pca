@@ -8,3 +8,4 @@ requests
 pandas
 pyarrow
 pyyaml
+tiled[client]==0.1.0a107

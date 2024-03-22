@@ -6,10 +6,11 @@ import numpy as np
 class PCAParameters(BaseModel):
     n_components: int = Field(description='number of components to keep')
 
+
 def load_images_from_directory(directory_path):
     image_data = []
-    for filename in os.listdir(directory_path):
-        if filename.endswith(".png"):
+    for filename in sorted(os.listdir(directory_path)):
+        if filename.lower().endswith((".png", ".tif", ".tiff", ".jpeg", ".jpg")):
             file_path = os.path.join(directory_path, filename)
             try:
                 img = Image.open(file_path)
@@ -20,3 +21,6 @@ def load_images_from_directory(directory_path):
     
     image_data = np.array(image_data)
     return image_data
+
+# path = "/Users/runbojiang/Desktop/file_data_clinic/archive"
+# load_images_from_directory(path)

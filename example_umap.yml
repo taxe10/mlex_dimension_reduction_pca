@@ -2,10 +2,10 @@
 
 # I/O
 io_parameters:
-  data_tiled_uri: https://tiled-seg.als.lbl.gov/api/v1/metadata/reconstruction/rec20190524_085542_clay_testZMQ_8bit/20190524_085542_clay_testZMQ_
+  data_uris: ["dir_uri1", "dir_uri2", "tiled_uri1"] # either all dir from file system, or all tiled uri
   data_tiled_api_key:
+  data_type: 'file' # either "file" or "tiled"
   uid_save:
-  images_dir: 'data/example_shapes/Demoshapes.npz' # data_uri: a lit of uri? [https://..., https://..., ...]
   output_dir: 'data/output'
 
 model_parameters:
