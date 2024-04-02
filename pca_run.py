@@ -67,12 +67,10 @@ if __name__ == "__main__":
         data_uris = io_parameters["data_uris"]
 
         for uri in data_uris:
-            if uri == "data/example_shapes/Demoshapes.npz":  # example dataset
-                images = np.load(uri)["arr_0"]
-            if uri == "data/example_shapes/Demoshapes.npz":  # example dataset
+            if "data/example_shapes/Demoshapes.npz" in uri:  # example dataset
                 images = np.load(uri)["arr_0"]
             elif (
-                uri == "data/example_latentrepresentation/f_vectors.parquet"
+                "data/example_latentrepresentation/f_vectors.parquet" in uri
             ):  # example dataset
                 df = pd.read_parquet(uri)
                 images = df.values
@@ -89,6 +87,8 @@ if __name__ == "__main__":
                         api_key=io_parameters["data_tiled_api_key"],
                     )
                     images = tiled_client[uri][:]
+                    if len(images.shape) == 2:
+                        images = images[np.newaxis, :, :]
 
             if stacked_images is None:
                 stacked_images = images
