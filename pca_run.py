@@ -57,7 +57,7 @@ if __name__ == "__main__":
     stacked_images = None
 
     uid_retrieve = io_parameters["uid_retrieve"]
-    if uid_retrieve is not None:
+    if uid_retrieve != "":
         # Get feature vectors from autoencoder
         auto_fv_dir = io_parameters["output_dir"] + "/" + uid_retrieve
         stacked_images = pd.read_parquet(f"{auto_fv_dir}/f_vectors.parquet").values
