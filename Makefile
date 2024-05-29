@@ -26,7 +26,7 @@ build_podman:
 	podman build -t ghcr.io/runboj/mlex_dimension_reduction_umap:main -f ./Dockerfile .
 
 PCA_example:
-	docker run -u ${ID_USER $USER}:${ID_GROUP $USER} --shm-size=1g --ulimit memlock=-1 --ulimit stack=67108864 --memory-swap -1 -it -v ${PWD}:/app/work/ ${IMG_WEB_SVC} python pca_run.py data/example_shapes/Demoshapes.npz data/output '{"n_components": 2}'
+	docker run -u ${ID_USER $USER}:${ID_GROUP $USER} --shm-size=1g --ulimit memlock=-1 --ulimit stack=67108864 --memory-swap -1 -it -v ${PWD}:/app/work/ ${IMG_WEB_SVC} python src/mlex_dimension_reduction_pca/pca_run.py data/example_shapes/Demoshapes.npz data/output '{"n_components": 2}'
 
 push_docker:
 	docker push ${IMG_WEB_SVC}

@@ -30,7 +30,7 @@ dependencies = [
 dev = [
     "flake8",
     "pre-commit",
-    "pytest-mock",
+    "pytest"
 ]
 
 [project.urls]
