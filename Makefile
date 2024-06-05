@@ -1,4 +1,4 @@
-TAG 			:= latest	
+TAG 			:= latest
 USER 			:= mlexchange
 PROJECT			:= dimension-reduction-pca
 
@@ -16,8 +16,11 @@ test:
 	echo ${PROJECT}:${TAG}
 	echo ${ID_USER}
 
-build_docker: 
+build_docker:
 	docker build -t ${IMG_WEB_SVC} -f ./Dockerfile .
+
+build_podman:
+	podman build -t ghcr.io/runboj/mlex_dimension_reduction_pca:main -f ./docker/Dockerfile .
 
 run_docker:
 	docker run --shm-size=1g --ulimit memlock=-1 --ulimit stack=67108864 --memory-swap -1 -it -v ${PWD}/data:/app/work/data/ ${IMG_WEB_SVC} bash
@@ -26,11 +29,11 @@ build_podman:
 	podman build -t ghcr.io/runboj/mlex_dimension_reduction_umap:main -f ./Dockerfile .
 
 PCA_example:
-	docker run -u ${ID_USER $USER}:${ID_GROUP $USER} --shm-size=1g --ulimit memlock=-1 --ulimit stack=67108864 --memory-swap -1 -it -v ${PWD}:/app/work/ ${IMG_WEB_SVC} python src/mlex_dimension_reduction_pca/pca_run.py data/example_shapes/Demoshapes.npz data/output '{"n_components": 2}'
+	docker run -u ${ID_USER $USER}:${ID_GROUP $USER} --shm-size=1g --ulimit memlock=-1 --ulimit stack=67108864 --memory-swap -1 -it -v ${PWD}:/app/work/ ${IMG_WEB_SVC} python pca_run.py example_pca.yaml
 
 push_docker:
 	docker push ${IMG_WEB_SVC}
-clean: 
+clean:
 	find -name "*~" -delete
 	-rm .python_history
 	-rm -rf .config

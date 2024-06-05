@@ -22,6 +22,7 @@ dependencies = [
     "requests",
     "pandas",
     "pyarrow",
+    "tiled[client]==0.1.0a118",
 ]
 
 [project.optional-dependencies]
