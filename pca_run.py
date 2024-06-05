@@ -1,5 +1,6 @@
 import argparse
 import logging
+import os
 import time
 
 import yaml
@@ -45,9 +46,18 @@ if __name__ == "__main__":
     start_time = time.time()
 
     # Run PCA
+    if io_parameters.save_model_path is not None:
+        os.makedirs(io_parameters.save_model_path, exist_ok=True)
+        save_model_path = (
+            f"{io_parameters.save_model_path}/{io_parameters.uid_save}.joblib"
+        )
+    else:
+        save_model_path = None
     latent_vectors = compute_pca(
         stacked_images,
         n_components=model_parameters.n_components,
+        load_model_path=io_parameters.load_model_path,
+        save_model_path=save_model_path,
     )
 
     save_results(latent_vectors, io_parameters, tiled_dataset, parameters)
