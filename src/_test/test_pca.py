@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 
-from pca_run import computePCA
+from mlex_dimension_reduction_pca.pca_run import computePCA
 
 
 def test_1d_input():
