@@ -1,68 +1,68 @@
-from sklearn.decomposition import PCA
 import argparse
-import pathlib
-import numpy as np
-import json
-import pandas as pd
+import logging
+import os
 import time
 
-from utils import PCAParameters, load_images_from_directory
+import yaml
 
-""" Compute PCA
-    Input: 1d data (N, M) or 2d data (N, H, W)
-    Output: latent vectors of shape (N, 2) or (N, 3)
-"""
+from src.dim_reduction import compute_pca
+from src.parameters import IOParameters, PCAParameters
+from src.utils.data_utils import load_data, save_results
+from src.utils.tiled_utils import TiledDataset
 
-def computePCA(data, n_components=2, standarize=False):
-    data = data.reshape(data.shape[0], -1)
-    pca = PCA(n_components=n_components)
-    data_pca = pca.fit_transform(data)
-    return data_pca
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+console_handler = logging.StreamHandler()
+logger.addHandler(console_handler)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-
-    parser.add_argument('image_dir', help='image filepath')
-    parser.add_argument('output_dir', help='dir to save the computed latent vactors')
-    parser.add_argument('parameters', help='dictionary that contains model parameters')
-    
+    parser.add_argument("yaml_path", type=str, help="path of yaml file for parameters")
     args = parser.parse_args()
 
-    images_dir = args.image_dir
-    output_dir = pathlib.Path(args.output_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
+    # Load parameters
+    with open(args.yaml_path, "r") as file:
+        parameters = yaml.safe_load(file)
 
-    ## Load images from given images_dir
-    images = None
-    if images_dir == 'data/example_shapes/Demoshapes.npz': # example dataset 
-        images = np.load(images_dir)['arr_0']
-    elif images_dir == 'data/example_latentrepresentation/f_vectors.parquet': # example dataset 
-        df = pd.read_parquet(images_dir)
-        images = df.values
-    elif images_dir.split('.')[-1] == 'parquet': # data clinic
-        df = pd.read_parquet(images_dir)
-        images = df.values
-    else: # user uploaded zip file
-        images = load_images_from_directory(images_dir)
-    print(images.shape)
+    # Validate parameters
+    io_parameters = IOParameters(**parameters["io_parameters"])
+    model_parameters = PCAParameters(**parameters["model_parameters"])
+    logger.info(f"Parameters loaded: {model_parameters}")
+
+    # Load images from given data_uris
+    if io_parameters.data_type == "file":
+        data_uri = None
+    else:
+        data_uri = io_parameters.root_uri
+    tiled_dataset = TiledDataset(
+        data_uri,
+        io_parameters.result_tiled_uri,
+        read_tiled_key=io_parameters.data_tiled_api_key,
+        write_tiled_key=io_parameters.result_tiled_api_key,
+    )
+    stacked_images = load_data(io_parameters, tiled_dataset, logger)
+
     start_time = time.time()
-    # Load dimension reduction parameter
-    if args.parameters is not None:
-        parameters = PCAParameters(**json.loads(args.parameters))
-    
-    print(f'PCA parameters: {parameters.n_components}')
 
     # Run PCA
-    latent_vectors = computePCA(images, n_components=parameters.n_components)
-    print("Latent vector shape: ", latent_vectors.shape)
-    
-    # Save latent vectors
-    output_name = 'latent_vectors.npy'
-    np.save(str(output_dir) + '/' + output_name, latent_vectors)
+    if io_parameters.save_model_path is not None:
+        os.makedirs(io_parameters.save_model_path, exist_ok=True)
+        save_model_path = (
+            f"{io_parameters.save_model_path}/{io_parameters.uid_save}.joblib"
+        )
+    else:
+        save_model_path = None
+    latent_vectors = compute_pca(
+        stacked_images,
+        n_components=model_parameters.n_components,
+        load_model_path=io_parameters.load_model_path,
+        save_model_path=save_model_path,
+    )
 
-    print("PCA done, latent vector saved.")
+    save_results(latent_vectors, io_parameters, tiled_dataset, parameters)
+
+    logger.info("PCA done!")
     end_time = time.time()
     execution_time = end_time - start_time
-
-    # Print the execution time
-    print(f"Execution time: {execution_time} seconds")
+    logger.info(f"Execution time: {execution_time} seconds")
